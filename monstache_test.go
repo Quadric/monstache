@@ -109,7 +109,7 @@ func TestParseSecureMongoUrl(t *testing.T) {
 }
 
 func TestInsert(t *testing.T) {
-	client, err := elastic.NewClient()
+	client, err := elastic.NewClient(elastic.SetSniff(false))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -136,7 +136,7 @@ func TestInsert(t *testing.T) {
 }
 
 func TestUpdate(t *testing.T) {
-	client, err := elastic.NewClient()
+	client, err := elastic.NewClient(elastic.SetSniff(false))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -173,7 +173,7 @@ func TestUpdate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	client, err := elastic.NewClient()
+	client, err := elastic.NewClient(elastic.SetSniff(false))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -208,7 +208,7 @@ func TestDelete(t *testing.T) {
 }
 
 func TestDropDatabase(t *testing.T) {
-	client, err := elastic.NewClient()
+	client, err := elastic.NewClient(elastic.SetSniff(false))
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -247,7 +247,7 @@ func TestDropDatabase(t *testing.T) {
 }
 
 func TestDropCollection(t *testing.T) {
-	client, err := elastic.NewClient()
+	client, err := elastic.NewClient(elastic.SetSniff(false))
 	if err != nil {
 		t.Fatal(err)
 	}
