@@ -1,13 +1,16 @@
 package main
 
 import (
+	"crypto/tls"
 	"encoding/json"
 	"flag"
+	"net"
+	"testing"
+	"time"
+
 	"github.com/globalsign/mgo"
 	"github.com/olivere/elastic"
 	"golang.org/x/net/context"
-	"testing"
-	"time"
 )
 
 /*
@@ -38,6 +41,54 @@ func DropTestDB(t *testing.T, session *mgo.Session) {
 	if err := db.DropDatabase(); err != nil {
 		t.Fatal(err)
 	}
+}
+
+func dialMongoTest(inURL string) (*mgo.Session, error) {
+	// ssl := config.MongoDialSettings.Ssl || config.MongoPemFile != ""
+	// ssl := true
+	// if ssl {
+	tlsConfig := &tls.Config{}
+	// if config.MongoPemFile != "" {
+	// 	certs := x509.NewCertPool()
+	// 	if ca, err := ioutil.ReadFile(config.MongoPemFile); err == nil {
+	// 		certs.AppendCertsFromPEM(ca)
+	// 	} else {
+	// 		return nil, err
+	// 	}
+	// 	tlsConfig.RootCAs = certs
+	// }
+	// Check to see if we don't need to validate the PEM
+	// if config.MongoValidatePemFile == false {
+	// Turn off validation
+	tlsConfig.InsecureSkipVerify = true
+	// }
+	dialInfo, err := mgo.ParseURL(inURL)
+	if err != nil {
+		return nil, err
+	}
+	dialInfo.Timeout = time.Duration(10) * time.Second
+	// if config.MongoDialSettings.Timeout != -1 {
+	// dialInfo.Timeout = time.Duration(config.MongoDialSettings.Timeout) * time.Second
+	// }
+	dialInfo.DialServer = func(addr *mgo.ServerAddr) (net.Conn, error) {
+		conn, err := tls.Dial("tcp", addr.String(), tlsConfig)
+		if err != nil {
+			errorLog.Printf("Unable to dial mongodb: %s", err)
+		}
+		return conn, err
+	}
+	session, err := mgo.DialWithInfo(dialInfo)
+	if err == nil {
+		session.SetSyncTimeout(1 * time.Minute)
+		session.SetSocketTimeout(1 * time.Minute)
+	}
+	return session, err
+	// }
+	// if config.MongoDialSettings.Timeout != -1 {
+	// 	return mgo.DialWithTimeout(inURL,
+	// 		time.Duration(config.MongoDialSettings.Timeout)*time.Second)
+	// }
+	// return mgo.Dial(inURL)
 }
 
 func ValidateDocResponse(t *testing.T, doc map[string]string, resp *elastic.GetResult) {
@@ -113,7 +164,8 @@ func TestInsert(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	session, err := mgo.Dial("localhost")
+	// session, err := dialMongoTest("mongodb://root-user:mongo-pass@localhost:27017")
+	session, err := dialMongoTest("mongodb://root-user:mongo-pass@localhost:27017")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -140,7 +192,7 @@ func TestUpdate(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	session, err := mgo.Dial("localhost")
+	session, err := dialMongoTest("mongodb://root-user:mongo-pass@localhost:27017")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -177,7 +229,7 @@ func TestDelete(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	session, err := mgo.Dial("localhost")
+	session, err := dialMongoTest("mongodb://root-user:mongo-pass@localhost:27017")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -212,7 +264,7 @@ func TestDropDatabase(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	session, err := mgo.Dial("localhost")
+	session, err := dialMongoTest("mongodb://root-user:mongo-pass@localhost:27017")
 	if err != nil {
 		t.Fatal(err)
 	}
@@ -251,7 +303,7 @@ func TestDropCollection(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	session, err := mgo.Dial("localhost")
+	session, err := dialMongoTest("mongodb://root-user:mongo-pass@localhost:27017")
 	if err != nil {
 		t.Fatal(err)
 	}

@@ -1,0 +1,193 @@
+# https://rwynn.github.io/monstache-site/start/#usage
+
+# compress requests to Elasticsearch
+# TODO double check
+gzip = true
+
+# generate indexing statistics
+stats = true
+
+# index statistics into Elasticsearch
+index-stats = true
+
+# connect to MongoDB using the following URL
+mongo-url = "mongodb://root-user:mongo-pass@localhost:27017"
+# mongo-url = "mongodb://app-user:mongo-pass@mongo-0:27017/meteor"
+
+# # use the following PEM file for connections to MongoDB
+# mongo-pem-file = "/path/to/mongoCert.pem"
+
+# disable PEM validation
+mongo-validate-pem-file = false
+
+# connect to the Elasticsearch REST API at the following URLs
+# elasticsearch-urls = ["http://es5:9200"]
+# elasticsearch-urls = ["http://es6:9200"]
+elasticsearch-urls = ["http://localhost:9200"]
+# elasticsearch-urls = ["http://es5:9200/meteor"]
+
+# # use the following user name for Elasticsearch basic auth
+# elasticsearch-user = "someuser"
+# # use the following password for Elasticsearch basic auth
+# elasticsearch-password = "somepassword"
+
+# use 10 go routines concurrently pushing documents to Elasticsearch
+elasticsearch-max-conns = 10
+
+# # use the following PEM file to connections to Elasticsearch
+# elasticsearch-pem-file = "/path/to/elasticCert.pem"
+# # validate connections to Elasticsearch
+# elastic-validate-pem-file = true
+
+# propogate dropped collections in MongoDB as index deletes in Elasticsearch
+dropped-collections = true
+# propogate dropped databases in MongoDB as index deletes in Elasticsearch
+dropped-databases = true
+
+# # do not start processing at the beginning of the MongoDB oplog
+# replay = false
+
+# # resume processing from a timestamp saved in a previous run
+# TODO double check
+resume = true
+# # do not validate that progress timestamps have been saved
+resume-write-unsafe = true
+# # override the name under which resume state is saved
+# resume-name = "default"
+
+# # include documents whose namespace matches the following pattern
+# namespace-regex = '^meteor\.(mycollection|\$cmd)$'
+# namespace-regex = '^meteor\.(brands|works|persons)$'
+# namespace-regex = '^*\.(brands|works|persons)$'
+# namespace-regex = '*'
+
+# # exclude documents whose namespace matches the following pattern
+# namespace-exclude-regex = '^mydb\.(ignorecollection|\$cmd)$'
+
+# turn on indexing of GridFS file content
+# index-files = true
+# # turn on search result highlighting of GridFS content
+# file-highlighting = true
+# # index GridFS files inserted into the following collections
+# file-namespaces = ["users.fs.files"]
+
+# print detailed information including request traces
+verbose = true
+
+# # enable clustering mode
+# cluster-name = 'apollo'
+
+# do not exit after full-sync, rather continue tailing the oplog
+exit-after-direct-reads = false
+
+prune-invalid-json = true
+
+# https://rwynn.github.io/monstache-site/advanced/#http-server
+# https://rwynn.github.io/monstache-site/config/#enable-http-server
+enable-http-server = true
+# http-server-addr = ":8081"
+
+# https://rwynn.github.io/monstache-site/config/#fail-fast
+# fail-fast = true
+
+# # # do a full-sync of the following collections
+# # direct-read-namespaces = ""
+# # direct-read-namespaces = ["meteor.*"]
+# # direct-read-namespaces = ["meteor"]
+# direct-read-namespaces = [
+#   "meteor.brands",
+#   "meteor.works",
+#   "meteor.persons",
+#   # "meteor.credits",
+
+#   # "meteor.available-votes",
+#   # "meteor.brand-affiliations",
+#   # "meteor.categorizations",
+#   # "meteor.credits-summary",
+#   # "meteor.domains",
+#   # "meteor.feeds",
+#   # "meteor.files",
+#   # "meteor.ideas",
+#   # "meteor.impressions",
+#   # "meteor.invitations",
+#   # "meteor.migrations",
+#   # "meteor.perception-pool",
+#   # "meteor.perceptions",
+#   # "meteor.persons",
+#   # "meteor.portfolio-items",
+#   # "meteor.queue.jobs",
+#   # "meteor.ratings",
+#   # "meteor.requests",
+#   # "meteor.reviews",
+#   # "meteor.roles",
+#   # "meteor.teams",
+#   # "meteor.users",
+#   # "meteor.waiting-list",
+#   # "meteor.work-contributions"
+# ]
+# # direct-read-namespaces = ["meteor."]
+
+[mongo-dial-settings]
+ssl = true
+
+# # [[script]]
+# # # this script does not declare a namespace
+# # # it is global to all collections
+# # routing = true
+# # script = """
+# # module.exports = function(doc, ns) {
+# #   doc._meta_monstache = { index: ns.split(".")[1] };
+# #   return doc;
+# # }
+# # """
+
+# # # # Don't have to set the mapping per collection, the above global script will update the index name for all collection, removing the database name from it
+
+# # # [[mapping]]
+# # # namespace = "meteor.brands"
+# # # index = "brands"
+# # # type = "_doc"
+
+# # # [[mapping]]
+# # # namespace = "meteor.works"
+# # # index = "works"
+# # # type = "_doc"
+
+# # # [[mapping]]
+# # # namespace = "meteor.persons"
+# # # index = "persons"
+# # # type = "_doc"
+
+# # # # # We set routing-namespaces for renamed namespaces, so that monstache deletes/drops operations correctly in the routed namespaces
+# # # # https://rwynn.github.io/monstache-site/config/#routing-namespaces
+# # # routing-namespaces = [
+# # #   "meteor.brands",
+# # #   "meteor.works",
+# # #   "meteor.persons"
+# # # ]
+
+# # [[script]]
+# # namespace = "meteor.brands"
+# # path = "/monstache/transformers/brand.js"
+# # # script = """
+# # # var counter = 1;
+# # # module.exports = function(doc) {
+# # #     if (!doc.focus) {
+# # #       doc.focus = 0.0;
+# # #     }
+# # #     if (!doc.score) {
+# # #       doc.score = 0.0;
+# # #     }
+# # #
+# # #     doc.name += "test" + counter;
+# # #     counter++;
+# # #     return _.omit(doc, "password", "secret");
+# # # }
+# # # """
+
+# # # TODO double check
+# # [logs]
+# # # error = "/tmp/logs/errors"
+# # # info  = "/tmp/logs/info"
+# # trace = "/tmp/logs/trace"
+# # stats = "/tmp/logs/stats"
